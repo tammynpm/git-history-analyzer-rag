@@ -59,19 +59,23 @@ collection.add(
 
 print(f"Stored {len(chunks)} commits in chromadb") 
 
+questions = [
+    "what was updated in the readme", 
+    "what changes were made in january", 
+    "what did tammynpm work on", 
+]
 
-query = "what was updated in the readme"
-query_embedding = model.encode([query]).tolist()
-results = collection.query(
-    query_embeddings = query_embedding,
-    n_results = 5,
-)
-
-context = ""
-for i in range(len(results["documents"][0])):
-    context += results["documents"][0][i] + "\n\n---\n\n"
-
-prompt = f"""
+for query in questions:
+    query_embedding = model.encode([query]).tolist()
+    results = collection.query(
+        query_embeddings = query_embedding,
+        n_results = 5,
+    )    
+    
+    context = ""
+    for i in range(len(results["documents"][0])):
+        context += results["documents"][0][i] + "\n\n---\n\n"
+    prompt = f"""Based on these git commits, answer the question. 
 
 COMMITS:
 {context}
@@ -84,6 +88,7 @@ resp = requests.post(
     "http://localhost:11434/api/generate", json={"model": "phi3:mini", "prompt": prompt, "stream": False}, timeout=120
 )
 
-print(f"Search: '{query}'\n")
-print(resp.json()["response"])
+print(f"\nQ: {query}")
+print(f"A: {resp.json()["response"]}\n")
+print("-" * 40)
 
