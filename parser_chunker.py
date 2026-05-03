@@ -18,7 +18,7 @@ ids = []
 metadatas= []
 
 
-for commit in repo.iter_commits(max_count=10):
+for commit in repo.iter_commits(max_count=50): #no. of commits stored in chromadb
     files = commit.stats.files
     #print(f"\n{commit.hexsha[:8]} | {commit.message.strip()}")
     #for filepath, stats in files.items():
