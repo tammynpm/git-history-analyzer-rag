@@ -11,7 +11,7 @@ collection = client.get_or_create_collection(
     metadata={"hnsw:space":"cosine"}
 )
 
-repo = Repo("../contamination-gauge-demo")
+repo = Repo("/home/debian/rag/django")
 
 chunks = []
 ids = []
