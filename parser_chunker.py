@@ -69,7 +69,7 @@ results = collection.query(
 
 context = ""
 for i in range(len(results["documents"][0])):
-    context += results["documents"][i] + "\n\n---\n\n"
+    context += results["documents"][0][i] + "\n\n---\n\n"
 
 prompt = f"""
 
@@ -81,8 +81,9 @@ ANSWER:
 """
 
 resp = requests.post(
-    "http://localhost:11323/api/generate", json={"model": "phi3:mini", "prompt": prompt, "stream": False}, timeout=120
+    "http://localhost:11434/api/generate", json={"model": "phi3:mini", "prompt": prompt, "stream": False}, timeout=120
 )
 
+print(f"Search: '{query}'\n")
 print(resp.json()["response"])
 
