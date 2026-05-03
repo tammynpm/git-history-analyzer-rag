@@ -84,11 +84,11 @@ QUESTION: {query}
 ANSWER:
 """
 
-resp = requests.post(
-    "http://localhost:11434/api/generate", json={"model": "phi3:mini", "prompt": prompt, "stream": False}, timeout=120
-)
+    resp = requests.post(
+        "http://localhost:11434/api/generate", json={"model": "phi3:mini", "prompt": prompt, "stream": False}, timeout=120
+    )
 
-print(f"\nQ: {query}")
-print(f"A: {resp.json()["response"]}\n")
-print("-" * 40)
+    print(f"\nQ: {query}")
+    print(f"A: {resp.json()['response']}\n")
+    print("-" * 40)
 
