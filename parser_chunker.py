@@ -1,4 +1,5 @@
 import chromadb
+import requests
 from sentence_transformers import SentenceTransformer
 from git import Repo
 
@@ -63,11 +64,25 @@ query = "what was updated in the readme"
 query_embedding = model.encode([query]).tolist()
 results = collection.query(
     query_embeddings = query_embedding,
-    n_results = 3,
+    n_results = 5,
 )
 
-print(f"\nSearch: '{query}'\n")
+context = ""
 for i in range(len(results["documents"][0])):
-    print(f"[{i+1}] {results['metadatas'][0][i]['message']}")
+    context += results["documents"][i] + "\n\n---\n\n"
 
+prompt = f"""
+
+COMMITS:
+{context}
+
+QUESTION: {query}
+ANSWER:
+"""
+
+resp = requests.post(
+    "http://localhost:11323/api/generate", json={"model": "phi3:mini", "prompt": prompt, "stream": False}, timeout=120
+)
+
+print(resp.json()["response"])
 
