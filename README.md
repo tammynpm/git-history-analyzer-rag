@@ -52,4 +52,5 @@ python query.py "session timeout on slow connections"
 ### TODO
 - [ ] classify commits into categories
 - [ ] store full structured metadata
-- [ ] accept repo path and query from command line instead of hardcoding 
+- [ ] accept repo path and query from command line instead of hardcoding
+- [ ] setup tailscale on ollama server
