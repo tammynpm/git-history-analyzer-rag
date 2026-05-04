@@ -43,11 +43,26 @@ def classify_commit(message: str):
             category = cat
     return is_bug_fix, category
 
+def extract_components(files):
+    components = set() #to avoid duplicates
+    for filepath in files:
+        parts = filepath.split("/")
+        if len(parts) >=2 :
+            first_two = parts[:2]
+            joined = "/".join(first_two)
+            components.add(joined)
+        else:
+            components.add(parts[0])
+    return sorted(components)
+
 for commit in repo.iter_commits(max_count=50): #no. of commits stored in chromadb
     
     is_bug_fix, fix_category = classify_commit(commit.message)
-
-    files = commit.stats.files
+    
+    files = list(commit.stats.files.keys())
+    components = extract_components(files)
+    insertions = sum(s['insertions'] for s in commit.stats.files.values())
+    deletions = sum(s['deletions'] for s in commit.stats.files.values())
     #print(f"\n{commit.hexsha[:8]} | {commit.message.strip()}")
     #for filepath, stats in files.items():
     #    print(f" {filepath} +{stats['insertions']} -{stats['deletions']}")
@@ -72,7 +87,15 @@ for commit in repo.iter_commits(max_count=50): #no. of commits stored in chromad
     metadatas.append({
         "author": commit.author.name,
         "date": commit.authored_datetime.strftime("%Y-%m_%d"),
-        "message": commit.message.strip(),
+        "timestamp": int(commit.authored_datetime.timestamp()),
+        "subject": commit.message.strip().split("\n")[0],
+        "is_bug_fix": is_bug_fix,
+        "fix_category": fix_category,
+        "components": ",".join(components),
+        "files_changed": files_changed,
+        "insertions": insertions,
+        "deletions": deletions,
+
     })
 
 
