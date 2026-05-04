@@ -63,23 +63,16 @@ for commit in repo.iter_commits(max_count=50): #no. of commits stored in chromad
     components = extract_components(files)
     insertions = sum(s['insertions'] for s in commit.stats.files.values())
     deletions = sum(s['deletions'] for s in commit.stats.files.values())
-    #print(f"\n{commit.hexsha[:8]} | {commit.message.strip()}")
-    #for filepath, stats in files.items():
-    #    print(f" {filepath} +{stats['insertions']} -{stats['deletions']}")
-    #print(f"{commit.hexsha[:8]} | {commit.author.name} | {commit.authored_datetime} | {commit.message.strip()[:60]}")
-    
-    #chu
-    file_list = ", ".join(files.keys())
-    insertions = sum(s['insertions'] for s in files.values())
-    deletions = sum(s['deletions'] for s in files.values())
-
+    file_list = ", ".join(files)
     chunk = (
-        f"{commit.message.strip()}\n"
+        f"[{fix_category.upper()}] {', '.join(components)} - {commit.message.strip()}\n"
         f"Hash: {commit.hexsha[:8]}\n"
         f"Author: {commit.author.name}\n"
         f"Date: {commit.authored_datetime.strftime('%Y-%m-%d')}\n"
         f"Files: {file_list} (+{insertions}), -{deletions})"
-        
+        f"Components: {', '.join(components)}\n",
+        f"Category: {fix_category}\n",
+        f"Bug fix: {is_bug_fix}"
     )
 
     chunks.append(chunk)
@@ -92,7 +85,6 @@ for commit in repo.iter_commits(max_count=50): #no. of commits stored in chromad
         "is_bug_fix": is_bug_fix,
         "fix_category": fix_category,
         "components": ",".join(components),
-        "files_changed": files_changed,
         "insertions": insertions,
         "deletions": deletions,
 
