@@ -64,14 +64,14 @@ for commit in repo.iter_commits(max_count=50): #no. of commits stored in chromad
     insertions = sum(s['insertions'] for s in commit.stats.files.values())
     deletions = sum(s['deletions'] for s in commit.stats.files.values())
     file_list = ", ".join(files)
-    chunk = (
+    chunk = ( #list of tuples 
         f"[{fix_category.upper()}] {', '.join(components)} - {commit.message.strip()}\n"
         f"Hash: {commit.hexsha[:8]}\n"
         f"Author: {commit.author.name}\n"
         f"Date: {commit.authored_datetime.strftime('%Y-%m-%d')}\n"
         f"Files: {file_list} (+{insertions}), -{deletions})"
-        f"Components: {', '.join(components)}\n",
-        f"Category: {fix_category}\n",
+        f"Components: {', '.join(components)}\n"
+        f"Category: {fix_category}\n"
         f"Bug fix: {is_bug_fix}"
     )
 
