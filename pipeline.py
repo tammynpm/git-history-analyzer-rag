@@ -17,8 +17,36 @@ chunks = []
 ids = []
 metadatas= []
 
+BUG_FIX_SIGNALS= ["fix", "bug_fix", "bug fix", "hotfit", "bugfix",
+                  "resolve", "closes #", "fixes #", 
+                  "patch", "workaround",
+                  "crash", "error", "exception"
+                  ]
+
+CATEGORY_SIGNALS = {
+    "bug_fix": ["fix", "bug", "hotfix", "patch", "crash", "error", "solve"],
+    "feature": ["feat", "feature", "add", "implement", "new"],
+    "refactor": ["refactor", "restructure", "cleanup", "simplify"],
+    "test": ["test", "spec", "coverage"],
+    "documentation": ["doc", "readme", "content"],
+}
+
+def classify_commit(message: str):
+    text = message.lower()
+    is_bug_fix = any(signal in text for signal in BUG_FIX_SIGNALS)
+    category="other"
+    best_score=0
+    for cat, signals in CATEGORY_SIGNALS.items():
+        score=sum(1 for s in signals if signals in text)
+        if score > best_score:
+            best_score = score
+            category = cat
+    return is_bug_fix, category
 
 for commit in repo.iter_commits(max_count=50): #no. of commits stored in chromadb
+    
+    is_bug_fix, fix_category = classify_commit(commit.message)
+
     files = commit.stats.files
     #print(f"\n{commit.hexsha[:8]} | {commit.message.strip()}")
     #for filepath, stats in files.items():
