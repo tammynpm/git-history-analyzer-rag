@@ -37,7 +37,7 @@ def classify_commit(message: str):
     category="other"
     best_score=0
     for cat, signals in CATEGORY_SIGNALS.items():
-        score=sum(1 for s in signals if signals in text)
+        score=sum(1 for s in signals if s in text)
         if score > best_score:
             best_score = score
             category = cat
